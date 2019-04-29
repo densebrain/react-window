@@ -2,13 +2,13 @@
 
 import createListComponent from './createListComponent';
 
-import type { Props, ScrollToAlign } from './createListComponent';
+import type { Props, ScrollToAlign, State } from './createListComponent';
 
 const DEFAULT_ESTIMATED_ITEM_SIZE = 50;
 
 type VariableSizeProps = {|
   estimatedItemSize: number,
-  skipCache?: boolean,
+  clearCacheOnDataChange?: boolean,
   ...Props<any>,
 |};
 
@@ -29,17 +29,17 @@ const getItemMetadata = (
   index: number,
   instanceProps: InstanceProps
 ): ItemMetadata => {
-  const { itemSize, skipCache } = ((props: any): VariableSizeProps);
+  const { itemSize } = ((props: any): VariableSizeProps);
   const { itemMetadataMap, lastMeasuredIndex = -1 } = instanceProps;
 
-  if (skipCache === true || index > lastMeasuredIndex) {
+  if (index > lastMeasuredIndex) {
     let offset = 0;
     if (lastMeasuredIndex >= 0) {
       const itemMetadata = itemMetadataMap[lastMeasuredIndex];
       offset = itemMetadata.offset + itemMetadata.size;
     }
 
-    const startIndex = skipCache !== true ? lastMeasuredIndex + 1 : 0;
+    const startIndex = lastMeasuredIndex + 1;
 
     for (let i = startIndex; i <= index; i++) {
       let size = ((itemSize: any): itemSizeGetter)(i);
@@ -52,9 +52,7 @@ const getItemMetadata = (
       offset += size;
     }
 
-    if (skipCache !== true) {
-      instanceProps.lastMeasuredIndex = index;
-    }
+    instanceProps.lastMeasuredIndex = index;
   }
 
   return itemMetadataMap[index];
@@ -314,6 +312,20 @@ const VariableSizeList = createListComponent({
             `"${itemSize === null ? 'null' : typeof itemSize}" was specified.`
         );
       }
+    }
+  },
+
+  componentDidUpdate: (
+    instance: any,
+    instanceProps: any,
+    prevProps: Props<any>,
+    prevState: State,
+    snapshot: any
+  ) => {
+    const props: VariableSizeProps = instance.props;
+
+    if (props.itemData !== prevProps.itemData) {
+      instance.resetAfterIndex(0);
     }
   },
 });

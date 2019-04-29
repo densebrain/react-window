@@ -63,7 +63,7 @@ export type Props<T> = {|
   width: number | string,
 |};
 
-type State = {|
+export type State = {|
   instance: any,
   isScrolling: boolean,
   scrollDirection: ScrollDirection,
@@ -128,6 +128,7 @@ export default function createListComponent({
   initInstanceProps,
   shouldResetStyleCacheOnItemSizeChange,
   validateProps,
+  componentDidUpdate,
 }: {|
   getItemOffset: GetItemOffset,
   getEstimatedTotalSize: GetEstimatedTotalSize,
@@ -138,6 +139,13 @@ export default function createListComponent({
   initInstanceProps: InitInstanceProps,
   shouldResetStyleCacheOnItemSizeChange: boolean,
   validateProps: ValidateProps,
+  componentDidUpdate?: (
+    instance: any,
+    instanceProps: any,
+    prevProps: Props<any>,
+    prevState: State,
+    snapshot: any
+  ) => void,
 |}) {
   return class List<T> extends PureComponent<Props<T>, State> {
     _instanceProps: any = initInstanceProps(this.props, this);
@@ -229,7 +237,10 @@ export default function createListComponent({
       this._callPropsCallbacks();
     }
 
-    componentDidUpdate() {
+    componentDidUpdate(prevProps: Props<T>, prevState: State, snapshot: any) {
+      if (typeof componentDidUpdate === 'function') {
+        componentDidUpdate(this, this._instanceProps, (prevProps: any), prevState, snapshot);
+      }
       const { direction, layout } = this.props;
       const { scrollOffset, scrollUpdateWasRequested } = this.state;
 
