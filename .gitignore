@@ -4,9 +4,13 @@
 # dependencies
 node_modules
 
+# Jetbrains
+.idea
+
 # builds
 build
 dist
+*.tgz
 
 # misc
 .DS_Store

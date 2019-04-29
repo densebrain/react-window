@@ -8,6 +8,7 @@ const DEFAULT_ESTIMATED_ITEM_SIZE = 50;
 
 type VariableSizeProps = {|
   estimatedItemSize: number,
+  skipCache?: boolean,
   ...Props<any>,
 |};
 
@@ -18,7 +19,7 @@ type ItemMetadata = {|
   size: number,
 |};
 type InstanceProps = {|
-  itemMetadataMap: { [index: number]: ItemMetadata },
+  itemMetadataMap: { [key: number | number]: ItemMetadata },
   estimatedItemSize: number,
   lastMeasuredIndex: number,
 |};
@@ -28,17 +29,19 @@ const getItemMetadata = (
   index: number,
   instanceProps: InstanceProps
 ): ItemMetadata => {
-  const { itemSize } = ((props: any): VariableSizeProps);
-  const { itemMetadataMap, lastMeasuredIndex } = instanceProps;
+  const { itemSize, skipCache } = ((props: any): VariableSizeProps);
+  const { itemMetadataMap, lastMeasuredIndex = -1 } = instanceProps;
 
-  if (index > lastMeasuredIndex) {
+  if (skipCache === true || index > lastMeasuredIndex) {
     let offset = 0;
     if (lastMeasuredIndex >= 0) {
       const itemMetadata = itemMetadataMap[lastMeasuredIndex];
       offset = itemMetadata.offset + itemMetadata.size;
     }
 
-    for (let i = lastMeasuredIndex + 1; i <= index; i++) {
+    const startIndex = skipCache !== true ? lastMeasuredIndex + 1 : 0;
+
+    for (let i = startIndex; i <= index; i++) {
       let size = ((itemSize: any): itemSizeGetter)(i);
 
       itemMetadataMap[i] = {
@@ -49,7 +52,9 @@ const getItemMetadata = (
       offset += size;
     }
 
-    instanceProps.lastMeasuredIndex = index;
+    if (skipCache !== true) {
+      instanceProps.lastMeasuredIndex = index;
+    }
   }
 
   return itemMetadataMap[index];
