@@ -324,7 +324,10 @@ const VariableSizeList = createListComponent({
   ) => {
     const props: VariableSizeProps = instance.props;
 
-    if (props.itemData !== prevProps.itemData) {
+    if (
+      !!props.clearCacheOnDataChange &&
+      props.itemData !== prevProps.itemData
+    ) {
       instance.resetAfterIndex(0);
     }
   },

@@ -13,7 +13,7 @@ type itemSize = number | ((index: number) => number);
 type Direction = 'ltr' | 'rtl' | 'horizontal' | 'vertical';
 type Layout = 'horizontal' | 'vertical';
 
-type RenderComponentProps<T> = {|
+type RenderComponentProps<T: Array<any>> = {|
   data: T,
   index: number,
   isScrolling?: boolean,
@@ -37,6 +37,30 @@ type onScrollCallback = ({
 
 type ScrollEvent = SyntheticEvent<HTMLDivElement>;
 type ItemStyleCache = { [index: number]: Object };
+
+export class ItemDataPage<T: any = any> {
+  _items: Array<T>;
+  _offset: number;
+  _size: number;
+  _ready: boolean = false;
+
+  prepare(itemSize: GetItemSize) {
+    if (this._ready) {
+    }
+  }
+
+  constructor(...items: Array<T>) {
+    this._items = items;
+  }
+
+  get offset() {
+    return !this._ready ? 0 : this._offset;
+  }
+
+  get size() {
+    return !this._ready ? 0 : this._size;
+  }
+}
 
 export type Props<T> = {|
   children: RenderComponent<T>,
@@ -147,7 +171,7 @@ export default function createListComponent({
     snapshot: any
   ) => void,
 |}) {
-  return class List<T> extends PureComponent<Props<T>, State> {
+  return class List<T: Array<any>> extends PureComponent<Props<T>, State> {
     _instanceProps: any = initInstanceProps(this.props, this);
     _outerRef: ?HTMLDivElement;
     _resetIsScrollingTimeoutId: TimeoutID | null = null;
@@ -239,7 +263,13 @@ export default function createListComponent({
 
     componentDidUpdate(prevProps: Props<T>, prevState: State, snapshot: any) {
       if (typeof componentDidUpdate === 'function') {
-        componentDidUpdate(this, this._instanceProps, (prevProps: any), prevState, snapshot);
+        componentDidUpdate(
+          this,
+          this._instanceProps,
+          (prevProps: any),
+          prevState,
+          snapshot
+        );
       }
       const { direction, layout } = this.props;
       const { scrollOffset, scrollUpdateWasRequested } = this.state;
