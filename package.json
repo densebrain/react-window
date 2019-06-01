@@ -54,7 +54,8 @@
     "prepare": "yarn run build",
     "website:build": "cd website && yarn build",
     "website:deploy": "cd website && yarn deploy",
-    "website:run": "cd website && yarn start"
+    "website:run": "cd website && yarn start",
+    "release": "yarn run build && yarn version patch && yarn pack && ./.buildscripts/release.sh"
   },
   "lint-staged": {
     "{website,src}/**/*.{js,json,css}": [
