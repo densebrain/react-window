@@ -38,30 +38,6 @@ type onScrollCallback = ({
 type ScrollEvent = SyntheticEvent<HTMLDivElement>;
 type ItemStyleCache = { [index: number]: Object };
 
-export class ItemDataPage<T: any = any> {
-  _items: Array<T>;
-  _offset: number;
-  _size: number;
-  _ready: boolean = false;
-
-  prepare(itemSize: GetItemSize) {
-    if (this._ready) {
-    }
-  }
-
-  constructor(...items: Array<T>) {
-    this._items = items;
-  }
-
-  get offset() {
-    return !this._ready ? 0 : this._offset;
-  }
-
-  get size() {
-    return !this._ready ? 0 : this._size;
-  }
-}
-
 export type Props<T> = {|
   children: RenderComponent<T>,
   className?: string,
@@ -127,7 +103,7 @@ type GetStopIndexForStartIndex = (
 type InitInstanceProps = (props: Props<any>, instance: any) => any;
 type ValidateProps = (props: Props<any>) => void;
 
-const IS_SCROLLING_DEBOUNCE_INTERVAL = 150;
+const IS_SCROLLING_DEBOUNCE_INTERVAL = 350;
 
 const defaultItemKey = (index: number, data: any) => index;
 

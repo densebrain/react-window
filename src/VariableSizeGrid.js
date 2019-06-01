@@ -183,7 +183,11 @@ const findNearestItemBinarySearch = (
       instanceProps
     ).offset;
 
-    if (currentOffset === offset) {
+    if (
+      (middle === low && low === 0) ||
+      currentOffset === offset ||
+      [currentOffset, offset].some(it => isNaN(it))
+    ) {
       return middle;
     } else if (currentOffset < offset) {
       low = middle + 1;
