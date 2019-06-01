@@ -1,5 +1,11 @@
 # `react-window` changelog
 
+## 1.8.7
+* fixed `NaN` list
+
+## 1.8.5
+* fixed `NaN` issue for patch too
+
 ## 1.8.4
 * fixed `NaN` issue
 
