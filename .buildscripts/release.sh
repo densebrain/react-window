@@ -20,4 +20,5 @@ if [[ ! -e ${ARCHIVE} ]];then
   exit -1
 fi
 
+git push --tags
 gh-release ${GHR_OPTS} -a ${ARCHIVE} -y
